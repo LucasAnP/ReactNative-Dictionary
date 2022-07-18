@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 
 import { useTheme } from 'styled-components';
 import { apiAllWords, dictionaryApi } from '../../services/api'
@@ -7,41 +7,61 @@ import { AnimatedLoading } from '../../components/AnimatedLoading';
 import { WordButton } from '../../components/WordButton';
 
 import { Container, ListContainer, Title, TitleContainer } from './styles';
+import { WordModal } from '../../components/WordModal';
+import { AuthContext } from '../../AuthContext';
+import { useAuth } from '../../hooks/auth';
+
+interface WordData {
+    name: string;
+    phonetic: string;
+    meaning: string;
+}
 
 export function WordList() {
     const [words, setWords] = useState();
     const [loading, setLoading] = useState(false);
 
+    const [wordOpen, setWordOpen] = useState<WordData>();
+    const [showWordModal, setShowWordModal] = useState(false);
+
     const { colors } = useTheme();
+
+    const { user } = useAuth();
 
     async function requestWord(word: string) {
         setLoading(true);
-        console.log('palavra', word)
         try {
             const response = await dictionaryApi.get(`/${word}`);
-            console.log('response', response.data);
+            const formatedResponse: WordData = {
+                name: word,
+                phonetic: response.data[0].phonetic ? response.data[0].phonetic : '',
+                meaning: response.data[0].meanings ? response.data[0].meanings[0].definitions[0].definition : ''
+
+            }
+            setWordOpen(formatedResponse);
+            setShowWordModal(true);
         } catch (error) {
-            console.log(error)
+            console.warn(error)
         } finally {
             //If th request was ok or not, set the loading false
             setLoading(false);
         }
     }
 
-    useMemo(() => {
+    useEffect(() => {
         async function fetchWords() {
             setLoading(true);
             try {
                 const response = await apiAllWords.get('/words?select=*',
                     {
                         headers: {
-                            range: "0-100"
+                            range: "0-50"
                         }
                     }
                 );
                 setWords(response.data);
             } catch (error) {
-                console.log(error)
+                console.warn(error)
             } finally {
                 //If th request was ok or not, set the loading false
                 setLoading(false);
@@ -52,11 +72,13 @@ export function WordList() {
 
     return (
         <>
-            <AnimatedLoading isVisible={loading} />
+            {loading && <AnimatedLoading isVisible={loading} />}
             <StatusBar backgroundColor={colors.background} />
+            {showWordModal &&
+                <WordModal isVisible={showWordModal} setIsVisible={setShowWordModal} data={wordOpen} />}
             <Container>
                 <TitleContainer>
-                    <Title>Listagem de Palavras</Title>
+                    <Title>Word List</Title>
                 </TitleContainer>
                 <ListContainer>
                     <FlatList

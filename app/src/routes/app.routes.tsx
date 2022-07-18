@@ -8,7 +8,7 @@ import { WordList } from '../screens/WordsList';
 
 const { Navigator, Screen } = createBottomTabNavigator();
 
-export function MainRoutes() {
+export function AppRoutes() {
     const theme = useTheme();
 
     return (

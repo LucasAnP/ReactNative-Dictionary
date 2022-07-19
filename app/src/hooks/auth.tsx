@@ -23,7 +23,8 @@ interface AuthContextData {
     user: User;
     login(): Promise<void>;
     userStoragedLoading: boolean;
-    favoriteWord: any;
+    favoriteWord(word: string): any;
+    getUserById(): Promise<void>;
 }
 
 const AuthContext = createContext({} as AuthContextData);
@@ -63,6 +64,20 @@ function AuthProvider({ children }: AuthProviderProps) {
             await AsyncStorage.setItem(async_key, JSON.stringify(userLogged));
         } catch (error) {
 
+        }
+    }
+
+    async function getUserById() {
+        try {
+            const request = await apiAllWordsWithoutJWT.get(`/users?user_id=eq.${user.id}&select=*`);
+            setUser({
+                id: request.data[0].user_id,
+                email: request.data[0].email,
+                favorites: request.data[0].favorites,
+                history: request.data[0].history
+            });
+        } catch (error) {
+            console.warn('Error when get user');
         }
     }
 
@@ -107,7 +122,6 @@ function AuthProvider({ children }: AuthProviderProps) {
             ]
         });
     }
-
     async function favoriteWord(word: string) {
         if (user.favorites.length > 0) {
             const newUserLogged = {
@@ -115,14 +129,15 @@ function AuthProvider({ children }: AuthProviderProps) {
                 favorites: [...user.favorites, word],
             };
             setUser(newUserLogged);
+            registerUserFavorites(word)
         } else {
             const newUserLogged = {
                 ...user,
                 favorites: [word],
             };
             setUser(newUserLogged);
+            registerUserFavorites(word)
         }
-        // registerUserFavorites(word)
     }
 
     return (
@@ -132,6 +147,7 @@ function AuthProvider({ children }: AuthProviderProps) {
                 login,
                 userStoragedLoading,
                 favoriteWord,
+                getUserById,
             }}
         >
             {children}

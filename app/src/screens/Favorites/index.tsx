@@ -1,14 +1,13 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from "react";
 
-import { useTheme } from 'styled-components';
-import { FlatList, StatusBar } from 'react-native';
-import { AnimatedLoading } from '../../components/AnimatedLoading';
-import { WordButton } from '../../components/WordButton';
+import { useTheme } from "styled-components";
+import { FlatList, StatusBar } from "react-native";
+import { WordButton } from "../../components/WordButton";
 
-import { Container, ListContainer, Title, TitleContainer } from './styles';
-import { WordModal } from '../../components/WordModal';
-import { useAuth } from '../../hooks/auth';
-import { dictionaryApi } from '../../services/api';
+import { Container, ListContainer, Title, TitleContainer } from "./styles";
+import { WordModal } from "../../components/WordModal";
+import { useAuth } from "../../hooks/auth";
+import { dictionaryApi } from "../../services/api";
 
 interface WordData {
     name: string;
@@ -24,9 +23,22 @@ export function Favorites() {
     const [wordOpen, setWordOpen] = useState<WordData>();
     const [showWordModal, setShowWordModal] = useState(false);
 
+    const [refreshing, setRefreshing] = useState<boolean>(false);
+
     const { colors } = useTheme();
 
-    const { user } = useAuth();
+    const { user, getUserById } = useAuth();
+
+    async function getUserData() {
+        setRefreshing(true);
+        await getUserById();
+        setRefreshing(false);
+    }
+
+    function onRefresh() {
+        setRefreshing(true);
+        getUserData();
+    }
 
     async function requestWord(word: string) {
         try {
@@ -34,26 +46,37 @@ export function Favorites() {
             setLoading(true);
             const formatedResponse: WordData = {
                 name: word,
-                phonetic: response.data[0].phonetic ? response.data[0].phonetic : '',
-                meaning: response.data[0].meanings ? response.data[0].meanings[0].definitions[0].definition : '',
-                favorite: true
-            }
+                phonetic: response.data[0].phonetic ? response.data[0].phonetic : "",
+                meaning: response.data[0].meanings
+                    ? response.data[0].meanings[0].definitions[0].definition
+                    : "",
+                favorite: true,
+            };
             setWordOpen(formatedResponse);
             setShowWordModal(true);
         } catch (error) {
-            console.warn('Error when get the words', error)
+            console.warn("Error when get the words", error);
         } finally {
             //If th request was ok or not, set the loading false
             setLoading(false);
         }
     }
 
+    // Refresh user when favorite
+    useEffect(() => {
+        getUserData();
+    }, []);
+
     return (
         <>
-            {loading && <AnimatedLoading isVisible={loading} />}
             <StatusBar backgroundColor={colors.background} />
-            {showWordModal &&
-                <WordModal isVisible={showWordModal} setIsVisible={setShowWordModal} data={wordOpen} />}
+            {showWordModal && (
+                <WordModal
+                    isVisible={showWordModal}
+                    setIsVisible={setShowWordModal}
+                    data={wordOpen}
+                />
+            )}
             <Container>
                 <TitleContainer>
                     <Title>Favorites</Title>
@@ -62,24 +85,22 @@ export function Favorites() {
                     <FlatList
                         data={user.favorites}
                         renderItem={({ item }) => (
-                            <WordButton word={item} onPress={
-                                () => requestWord(item)
-                            } />
+                            <WordButton word={item} onPress={() => requestWord(item)} />
                         )}
                         keyExtractor={(item, index) => item[index]}
-
                         numColumns={2}
                         horizontal={false}
                         showsVerticalScrollIndicator={false}
+                        onRefresh={onRefresh}
+                        refreshing={refreshing}
                         contentContainerStyle={{
-                            justifyContent: 'center',
-                            alignItems: 'center',
+                            justifyContent: "center",
+                            alignItems: "center",
                         }}
                         initialNumToRender={10}
                     />
                 </ListContainer>
             </Container>
-
         </>
     );
 }

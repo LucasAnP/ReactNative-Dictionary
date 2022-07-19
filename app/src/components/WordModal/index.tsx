@@ -26,8 +26,12 @@ export function WordModal({ isVisible, setIsVisible, data }: Props) {
 
     const { user, favoriteWord } = useAuth();
 
+    function closeModal() {
+        setIsVisible(!isVisible);
+    }
+
     useEffect(() => {
-        if (starFilled) {
+        if (starFilled && !data.favorite) {
             favoriteWord(data.name);
         }
     }, [starFilled])
@@ -35,12 +39,16 @@ export function WordModal({ isVisible, setIsVisible, data }: Props) {
     useEffect(() => {
         if (data.favorite) {
             setStarFilled(true);
+        } else {
+            user.favorites.forEach((value) => {
+                if (value === data.name) {
+                    setStarFilled(true);
+                }
+            })
         }
-    }, [])
 
-    function closeModal() {
-        setIsVisible(!isVisible);
-    }
+
+    }, [])
 
     return (
         <AnimatedModal isVisible={isVisible}
@@ -58,7 +66,7 @@ export function WordModal({ isVisible, setIsVisible, data }: Props) {
                             color={colors.background}
                         />
                     </CloseButtonContainer>
-                    <TouchableOpacity onPress={() => setStarFilled(!starFilled)} disabled={starFilled && !data.favorite}>
+                    <TouchableOpacity onPress={() => setStarFilled(true)} disabled={starFilled && !data.favorite}>
                         <MaterialIcons
                             name={starFilled ? "star" : "star-outline"}
                             size={RFValue(35)}

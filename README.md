@@ -9,3 +9,10 @@ Manipulação dos dados:
 2. Encontrou-se inconsistencias na base de dados do desafio, após contato com a organização, foi proposto uma nova base de dados: https://github.com/sindresorhus/word-list (acabou tendo o mesmo problema) - Utilizando https://www.ef.com.br/guia-de-ingles/vocabulario-ingles/3000-palavras/
 
 3. Não só existem palavras, mas também phrasel verbs. Então, fiz listas de duas colunas para ficar melhor visivelmente.
+
+Plus:
+
+1. Poder ver as palavras favoritadas quando abir o modal do historico
+2. Tela de Login
+3. Loading animado
+4. Refresh na lista se quiser atualizar (pull down)

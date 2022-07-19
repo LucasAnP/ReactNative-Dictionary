@@ -6,6 +6,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { Platform } from 'react-native';
 import { WordList } from '../screens/WordsList';
 import { Favorites } from '../screens/Favorites';
+import { History } from '../screens/History';
 
 const { Navigator, Screen } = createBottomTabNavigator();
 
@@ -33,7 +34,7 @@ export function AppRoutes() {
                 }}
 
             />
-            <Screen name={"History"} component={WordList}
+            <Screen name={"History"} component={History}
                 options={{
                     headerShown: false,
                     tabBarIcon: (({ size, color }) => (

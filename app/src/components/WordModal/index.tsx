@@ -12,6 +12,7 @@ interface WordData {
     phonetic: string;
     meaning: string;
     favorite?: boolean;
+    history?: boolean;
 }
 
 interface Props {
@@ -31,7 +32,7 @@ export function WordModal({ isVisible, setIsVisible, data }: Props) {
     }
 
     useEffect(() => {
-        if (starFilled && !data.favorite) {
+        if (starFilled && !(data.favorite || data.history)) {
             favoriteWord(data.name);
         }
     }, [starFilled])

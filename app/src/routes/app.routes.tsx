@@ -5,6 +5,7 @@ import { useTheme } from 'styled-components';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Platform } from 'react-native';
 import { WordList } from '../screens/WordsList';
+import { Favorites } from '../screens/Favorites';
 
 const { Navigator, Screen } = createBottomTabNavigator();
 
@@ -42,7 +43,7 @@ export function AppRoutes() {
                     ))
                 }}
             />
-            <Screen name={"Favorites"} component={WordList}
+            <Screen name={"Favorites"} component={Favorites}
                 options={{
                     headerShown: false,
                     tabBarIcon: (({ size, color }) => (

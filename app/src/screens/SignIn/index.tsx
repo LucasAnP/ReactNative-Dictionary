@@ -18,7 +18,7 @@ export function SignIn() {
         try {
             return await login();
         } catch (error) {
-            console.log(error)
+            console.warn(error)
             Alert.alert('Wrong Credentials')
         }
     }

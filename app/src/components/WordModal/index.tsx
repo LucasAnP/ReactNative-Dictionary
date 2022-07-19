@@ -11,6 +11,7 @@ interface WordData {
     name: string;
     phonetic: string;
     meaning: string;
+    favorite?: boolean;
 }
 
 interface Props {
@@ -30,6 +31,12 @@ export function WordModal({ isVisible, setIsVisible, data }: Props) {
             favoriteWord(data.name);
         }
     }, [starFilled])
+
+    useEffect(() => {
+        if (data.favorite) {
+            setStarFilled(true);
+        }
+    }, [])
 
     function closeModal() {
         setIsVisible(!isVisible);
@@ -51,7 +58,7 @@ export function WordModal({ isVisible, setIsVisible, data }: Props) {
                             color={colors.background}
                         />
                     </CloseButtonContainer>
-                    <TouchableOpacity onPress={() => setStarFilled(!starFilled)}>
+                    <TouchableOpacity onPress={() => setStarFilled(!starFilled)} disabled={starFilled && !data.favorite}>
                         <MaterialIcons
                             name={starFilled ? "star" : "star-outline"}
                             size={RFValue(35)}

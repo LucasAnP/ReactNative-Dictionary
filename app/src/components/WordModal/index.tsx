@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { AnimatedModal, CloseButtonContainer, MeaningsContainer, MeaningsText, MeaningsTitleContainer, ModalContainer, PhoneticSelectedText, Title, TopButtonsContainer, WordContainer, WordSelectedText } from "./styles";
 import { MaterialIcons } from "@expo/vector-icons";
 import { RFValue } from "react-native-responsive-fontsize";
 import { useTheme } from "styled-components";
 import { TouchableOpacity } from "react-native";
+import { useAuth } from "../../hooks/auth";
 
 interface WordData {
     name: string;
@@ -21,6 +22,14 @@ interface Props {
 export function WordModal({ isVisible, setIsVisible, data }: Props) {
     const { colors } = useTheme();
     const [starFilled, setStarFilled] = useState(false);
+
+    const { user, favoriteWord } = useAuth();
+
+    useEffect(() => {
+        if (starFilled) {
+            favoriteWord(data.name);
+        }
+    }, [starFilled])
 
     function closeModal() {
         setIsVisible(!isVisible);

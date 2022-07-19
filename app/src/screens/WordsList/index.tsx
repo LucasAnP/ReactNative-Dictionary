@@ -29,9 +29,9 @@ export function WordList() {
     const { user } = useAuth();
 
     async function requestWord(word: string) {
-        setLoading(true);
         try {
             const response = await dictionaryApi.get(`/${word}`);
+            setLoading(true);
             const formatedResponse: WordData = {
                 name: word,
                 phonetic: response.data[0].phonetic ? response.data[0].phonetic : '',

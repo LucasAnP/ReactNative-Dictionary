@@ -1,6 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { Alert, Text } from 'react-native';
+import { AnimatedLoading } from '../../components/AnimatedLoading';
 import { useAuth } from '../../hooks/auth';
 
 interface WordData {
@@ -10,11 +11,12 @@ interface WordData {
 }
 
 export function SignIn() {
-    const { user, login } = useAuth();
+    const { userStoragedLoading } = useAuth();
+    const { login } = useAuth();
 
     async function loginInApp() {
         try {
-            await login();
+            return await login();
         } catch (error) {
             console.log(error)
             Alert.alert('Wrong Credentials')
@@ -28,6 +30,7 @@ export function SignIn() {
 
     return (
         <>
+            <AnimatedLoading isVisible={userStoragedLoading} />
             <Text>SignIn</Text>
         </>
     );

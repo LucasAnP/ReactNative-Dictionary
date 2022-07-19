@@ -6,7 +6,7 @@ import { ThemeProvider } from 'styled-components';
 import theme from './src/global/styles/theme';
 import * as SplashScreen from 'expo-splash-screen';
 import LottieView from 'lottie-react-native';
-import { AuthProvider } from './src/hooks/auth'
+import { AuthProvider, useAuth } from './src/hooks/auth'
 import { Routes } from './src/routes';
 
 export default function App() {
@@ -16,6 +16,7 @@ export default function App() {
     Poppins_500Medium,
     Poppins_700Bold
   })
+  const { userStoragedLoading } = useAuth();
 
   useEffect(() => {
     if (!fontsLoaded) {
@@ -30,7 +31,6 @@ export default function App() {
           setAppIsReady(true);
         }
       }
-
       prepare();
     }
   }, []);
@@ -41,7 +41,7 @@ export default function App() {
     }
   }, [appIsReady]);
 
-  if (!appIsReady) {
+  if (!appIsReady || userStoragedLoading) {
     return (
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
         onLayout={onLayoutRootView}>

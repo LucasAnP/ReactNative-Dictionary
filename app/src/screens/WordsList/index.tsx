@@ -58,7 +58,7 @@ export function WordList() {
                 const response = await apiAllWords.get('/words?select=*',
                     {
                         headers: {
-                            range: "0-50"
+                            range: "0-200"
                         }
                     }
                 );

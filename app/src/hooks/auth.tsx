@@ -18,10 +18,13 @@ interface User {
     favorites?: string[];
     history?: string[];
 }
-
+interface FormData {
+    email: string;
+    password: string;
+}
 interface AuthContextData {
     user: User;
-    login(): Promise<void>;
+    login(userData: FormData): Promise<void>;
     userStoragedLoading: boolean;
     favoriteWord(word: string): any;
     unfavoritWord(word: string): any;
@@ -100,14 +103,13 @@ function AuthProvider({ children }: AuthProviderProps) {
         }
     }
 
-    async function login() {
+    async function login(userData) {
         try {
             //Do the login
             const { data } = await authApi.post("/token?grant_type=password", {
-                email: "teste3@gmail.com",
-                password: "123456",
+                email: userData.email,
+                password: userData.password,
             });
-
             //Check if user exist in DB (account created) and if dont, create an account
             getUserByIdAndCreateIfDont(data);
 

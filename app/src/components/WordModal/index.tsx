@@ -46,8 +46,6 @@ export function WordModal({ isVisible, setIsVisible, data }: Props) {
     }, [])
 
     function onPressStar() {
-        console.log('starFilled', starFilled);
-        console.log('data', data);
         if (data.favorite && starFilled) {
             unfavoritWord(data.name);
             setStarFilled(false);

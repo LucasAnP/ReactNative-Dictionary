@@ -6,7 +6,7 @@ import React, {
     useEffect,
     useState,
 } from "react";
-import { apiAllWords, authApi } from "../services/api";
+import { apiAllWords, apiAllWordsWithoutJWT, authApi } from "../services/api";
 
 interface AuthProviderProps {
     children: ReactNode;
@@ -36,10 +36,8 @@ function AuthProvider({ children }: AuthProviderProps) {
     useEffect(() => {
         async function loadUserLoggedData() {
             const userStoraged = await AsyncStorage.getItem(async_key);
-
             if (userStoraged) {
                 const userLogged = JSON.parse(userStoraged) as User;
-                console.log("User", userLogged);
                 setUser(userLogged);
             }
 
@@ -48,66 +46,83 @@ function AuthProvider({ children }: AuthProviderProps) {
         loadUserLoggedData();
     }, []);
 
-    async function createAccount() {
+    async function createAccount(logged) {
         try {
-            const { data } = await authApi.post("/token?grant_type=password", {
-                email: "teste1@gmail.com",
-                password: "123456",
-
-            });
+            const userLogged = {
+                id: logged.user.id,
+                email: logged.user.email,
+                favorites: [],
+                history: [],
+            };
+            await apiAllWords.post("/users", {
+                user_id: userLogged.id,
+                email: userLogged.email,
+                favorites: userLogged.favorites,
+                history: userLogged.history,
+            })
+            await AsyncStorage.setItem(async_key, JSON.stringify(userLogged));
         } catch (error) {
 
+        }
+    }
+
+    async function getUserByIdAndCreateIfDont(logged) {
+        try {
+            const request = await apiAllWordsWithoutJWT.get(`/users?user_id=eq.${logged.user.id}&select=*`);
+            setUser({
+                id: request.data[0].user_id,
+                email: request.data[0].email,
+                favorites: request.data[0].favorites,
+                history: request.data[0].history
+            });
+        } catch (error) {
+            await createAccount(logged);
         }
     }
 
     async function login() {
         try {
+            //Do the login
             const { data } = await authApi.post("/token?grant_type=password", {
                 email: "teste3@gmail.com",
                 password: "123456",
             });
-            if (data.user.id) {
-                const userLogged = {
-                    id: data.user.id,
-                    email: data.user.email,
-                    favorites: [],
-                    history: [],
-                };
-                const response = await apiAllWords.post("/users", {
-                    user_id: data.user.id,
-                    email: userLogged.email,
-                    favorites: userLogged.favorites,
-                    history: userLogged.history,
-                })
-                console.log(response)
-                setUser(userLogged);
-                await AsyncStorage.setItem(async_key, JSON.stringify(userLogged));
 
-            }
+            //Check if user exist in DB (account created) and if dont, create an account
+            getUserByIdAndCreateIfDont(data);
+
         } catch (error) {
-            console.log("error", error);
+            console.warn("error", error);
+            return
         }
     }
 
+
+
+    async function registerUserFavorites(word: string) {
+        const userAfterUpdate = await apiAllWords.patch(`/users?user_id=eq.${user.id}`, {
+            favorites: [
+                ...user.favorites,
+                word
+            ]
+        });
+    }
+
     async function favoriteWord(word: string) {
-        if (user.favorites) {
+        if (user.favorites.length > 0) {
             const newUserLogged = {
-                id: user.id,
-                email: user.email,
+                ...user,
                 favorites: [...user.favorites, word],
             };
             setUser(newUserLogged);
         } else {
             const newUserLogged = {
-                id: user.id,
-                email: user.email,
+                ...user,
                 favorites: [word],
             };
             setUser(newUserLogged);
         }
-        // await apiAllWords.post(`/users?some_column=user_id.${user.id}`, {
-        //     favorites: user.favorites
-        // })
+        // registerUserFavorites(word)
     }
 
     return (

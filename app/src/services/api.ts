@@ -11,6 +11,13 @@ export const apiAllWords = axios.create({
   },
 });
 
+export const apiAllWordsWithoutJWT = axios.create({
+  baseURL: "https:///qzawrbmsjyvxdrfcnbma.supabase.co/rest/v1",
+  headers: {
+    apikey: publicToken,
+  },
+});
+
 export const authApi = axios.create({
   baseURL: "https://qzawrbmsjyvxdrfcnbma.supabase.co/auth/v1",
   headers: {

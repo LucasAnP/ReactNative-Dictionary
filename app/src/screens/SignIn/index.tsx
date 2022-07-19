@@ -24,9 +24,8 @@ export function SignIn() {
     }
 
     useEffect(() => {
-        console.log('insideUseEffect');
         loginInApp();
-    })
+    }, [])
 
     return (
         <>

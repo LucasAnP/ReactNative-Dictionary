@@ -9,7 +9,7 @@ interface Props {
 
 export function AnimatedLoading({ isVisible }: Props) {
     return (
-        <AnimatedModal isVisible={isVisible} animationIn={"fadeIn"}>
+        <AnimatedModal isVisible={isVisible} >
             <LottieIcon
                 autoPlay
                 loop

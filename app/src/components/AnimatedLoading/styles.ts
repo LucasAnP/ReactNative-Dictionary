@@ -15,6 +15,6 @@ export const AnimatedModal = styled(ReactNativeModal)`
 `;
 
 export const LottieIcon = styled(AnimatedLottieView)`
-  width: ${RFValue(200)}px;
-  height: ${RFValue(200)}px;
+  width: ${RFValue(150)}px;
+  height: ${RFValue(150)}px;
 `;

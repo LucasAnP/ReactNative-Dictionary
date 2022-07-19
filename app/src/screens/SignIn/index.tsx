@@ -23,9 +23,9 @@ export function SignIn() {
         }
     }
 
-    useEffect(() => {
-        loginInApp();
-    }, [])
+    // useEffect(() => {
+    //     loginInApp();
+    // }, [])
 
     return (
         <>

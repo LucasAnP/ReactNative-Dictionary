@@ -8,6 +8,8 @@ import { Container, ListContainer, Title, TitleContainer } from "./styles";
 import { WordModal } from "../../components/WordModal";
 import { useAuth } from "../../hooks/auth";
 import { dictionaryApi } from "../../services/api";
+import { AnimatedLoading } from "../../components/AnimatedLoading";
+import { useIsFocused } from "@react-navigation/native";
 
 interface WordData {
     name: string;
@@ -17,8 +19,6 @@ interface WordData {
 }
 
 export function Favorites() {
-    const [words, setWords] = useState();
-    const [loading, setLoading] = useState(false);
 
     const [wordOpen, setWordOpen] = useState<WordData>();
     const [showWordModal, setShowWordModal] = useState(false);
@@ -28,6 +28,8 @@ export function Favorites() {
     const { colors } = useTheme();
 
     const { user, getUserById } = useAuth();
+
+    const isFocused = useIsFocused();
 
     async function getUserData() {
         setRefreshing(true);
@@ -43,7 +45,7 @@ export function Favorites() {
     async function requestWord(word: string) {
         try {
             const response = await dictionaryApi.get(`/${word}`);
-            setLoading(true);
+            setRefreshing(true);
             const formatedResponse: WordData = {
                 name: word,
                 phonetic: response.data[0].phonetic ? response.data[0].phonetic : "",
@@ -58,14 +60,14 @@ export function Favorites() {
             console.warn("Error when get the words", error);
         } finally {
             //If th request was ok or not, set the loading false
-            setLoading(false);
+            setRefreshing(false);
         }
     }
 
     // Refresh user when favorite
     useEffect(() => {
         getUserData();
-    }, []);
+    }, [isFocused]);
 
     return (
         <>

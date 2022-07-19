@@ -6,10 +6,11 @@ import { FlatList, StatusBar } from 'react-native';
 import { AnimatedLoading } from '../../components/AnimatedLoading';
 import { WordButton } from '../../components/WordButton';
 
-import { Container, ListContainer, Title, TitleContainer } from './styles';
+import { Container, FloatContainer, ListContainer, Title, TitleContainer } from './styles';
 import { WordModal } from '../../components/WordModal';
-import { AuthContext } from '../../AuthContext';
 import { useAuth } from '../../hooks/auth';
+import { MaterialIcons } from "@expo/vector-icons";
+import { RFValue } from 'react-native-responsive-fontsize';
 
 interface WordData {
     name: string;
@@ -26,12 +27,13 @@ export function WordList() {
 
     const { colors } = useTheme();
 
-    const { user } = useAuth();
+    const { registerHistory, logout } = useAuth();
 
     async function requestWord(word: string) {
+        setLoading(true);
+        await registerHistory(word);
         try {
             const response = await dictionaryApi.get(`/${word}`);
-            setLoading(true);
             const formatedResponse: WordData = {
                 name: word,
                 phonetic: response.data[0].phonetic ? response.data[0].phonetic : '',
@@ -47,6 +49,7 @@ export function WordList() {
             setLoading(false);
         }
     }
+
 
     useEffect(() => {
         async function fetchWords() {
@@ -72,7 +75,7 @@ export function WordList() {
 
     return (
         <>
-            {loading && <AnimatedLoading isVisible={loading} />}
+            <AnimatedLoading isVisible={loading} />
             <StatusBar backgroundColor={colors.background} />
             {showWordModal &&
                 <WordModal isVisible={showWordModal} setIsVisible={setShowWordModal} data={wordOpen} />}
@@ -80,6 +83,13 @@ export function WordList() {
                 <TitleContainer>
                     <Title>Word List</Title>
                 </TitleContainer>
+                <FloatContainer onPress={logout}>
+                    <MaterialIcons
+                        name="logout"
+                        size={RFValue(20)}
+                        color={colors.background}
+                    />
+                </FloatContainer>
                 <ListContainer>
                     <FlatList
                         data={words}

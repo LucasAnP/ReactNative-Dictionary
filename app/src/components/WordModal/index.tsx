@@ -6,6 +6,7 @@ import { RFValue } from "react-native-responsive-fontsize";
 import { useTheme } from "styled-components";
 import { TouchableOpacity } from "react-native";
 import { useAuth } from "../../hooks/auth";
+import { AnimatedLoading } from "../AnimatedLoading";
 
 interface WordData {
     name: string;
@@ -25,17 +26,11 @@ export function WordModal({ isVisible, setIsVisible, data }: Props) {
     const { colors } = useTheme();
     const [starFilled, setStarFilled] = useState(false);
 
-    const { user, favoriteWord } = useAuth();
+    const { user, favoriteWord, unfavoritWord, userRequestLoading } = useAuth();
 
     function closeModal() {
         setIsVisible(!isVisible);
     }
-
-    useEffect(() => {
-        if (starFilled && !(data.favorite || data.history)) {
-            favoriteWord(data.name);
-        }
-    }, [starFilled])
 
     useEffect(() => {
         if (data.favorite) {
@@ -48,16 +43,32 @@ export function WordModal({ isVisible, setIsVisible, data }: Props) {
             })
         }
 
-
     }, [])
+
+    function onPressStar() {
+        console.log('starFilled', starFilled);
+        console.log('data', data);
+        if (data.favorite && starFilled) {
+            unfavoritWord(data.name);
+            setStarFilled(false);
+            closeModal();
+        } else {
+            setStarFilled(!starFilled);
+            favoriteWord(data.name);
+        }
+        if (starFilled && !(data.favorite || data.history)) {
+            favoriteWord(data.name);
+        }
+    }
 
     return (
         <AnimatedModal isVisible={isVisible}
             animationIn={"slideInUp"}
             animationInTiming={500}
-            animationOut={"slideOutDown"}
+            animationOut={"slideOutDFown"}
             animationInOut={500}
         >
+            <AnimatedLoading isVisible={userRequestLoading} />
             <ModalContainer>
                 <TopButtonsContainer>
                     <CloseButtonContainer onPress={closeModal}>
@@ -67,7 +78,7 @@ export function WordModal({ isVisible, setIsVisible, data }: Props) {
                             color={colors.background}
                         />
                     </CloseButtonContainer>
-                    <TouchableOpacity onPress={() => setStarFilled(true)} disabled={starFilled && !data.favorite}>
+                    <TouchableOpacity onPress={onPressStar} disabled={starFilled && !data.favorite}>
                         <MaterialIcons
                             name={starFilled ? "star" : "star-outline"}
                             size={RFValue(35)}

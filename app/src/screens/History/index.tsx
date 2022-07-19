@@ -8,6 +8,7 @@ import { Container, ListContainer, Title, TitleContainer, WordBordered, WordText
 import { WordModal } from "../../components/WordModal";
 import { useAuth } from "../../hooks/auth";
 import { dictionaryApi } from "../../services/api";
+import { useIsFocused } from "@react-navigation/native";
 
 interface WordData {
     name: string;
@@ -28,6 +29,8 @@ export function History() {
 
     const { user, getUserById } = useAuth();
 
+    const isFocused = useIsFocused();
+
     async function getUserData() {
         setRefreshing(true);
         await getUserById();
@@ -42,7 +45,7 @@ export function History() {
     async function requestWord(word: string) {
         try {
             const response = await dictionaryApi.get(`/${word}`);
-            setLoading(true);
+            setRefreshing(true);
             const formatedResponse: WordData = {
                 name: word,
                 phonetic: response.data[0].phonetic ? response.data[0].phonetic : "",
@@ -61,10 +64,11 @@ export function History() {
         }
     }
 
-    // Refresh user when favorite
+    // Refresh user when changeList
     useEffect(() => {
         getUserData();
-    }, []);
+    }, [isFocused]);
+
 
     return (
         <>
@@ -87,7 +91,7 @@ export function History() {
                                 <WordText>{item}</WordText>
                             </WordBordered>
                         )}
-                        keyExtractor={(item, index) => item[index]}
+                        keyExtractor={(item, index) => index.toString()}
                         horizontal={false}
                         showsVerticalScrollIndicator={false}
                         onRefresh={onRefresh}

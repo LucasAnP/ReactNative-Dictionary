@@ -30,3 +30,19 @@ export const ListContainer = styled.View`
 
   justify-content: center;
 `;
+
+export const FloatContainer = styled.TouchableOpacity`
+  width: ${RFValue(40)}px;
+  height: ${RFValue(40)}px;
+
+  background-color: ${({ theme }) => theme.colors.title};
+  border-radius: 80px;
+
+  align-items: center;
+  justify-content: center;
+
+  position: absolute;
+
+  top: 2%;
+  right: 5%;
+`;

@@ -24,7 +24,11 @@ interface AuthContextData {
     login(): Promise<void>;
     userStoragedLoading: boolean;
     favoriteWord(word: string): any;
+    unfavoritWord(word: string): any;
     getUserById(): Promise<void>;
+    registerHistory(word: string): Promise<void>;
+    userRequestLoading: boolean;
+    logout(): Promise<void>;
 }
 
 const AuthContext = createContext({} as AuthContextData);
@@ -32,6 +36,7 @@ const AuthContext = createContext({} as AuthContextData);
 function AuthProvider({ children }: AuthProviderProps) {
     const [user, setUser] = useState<User>({} as User);
     const [userStoragedLoading, setUserStoragedLoading] = useState(true);
+    const [userRequestLoading, setUserRequestLoading] = useState(false);
     const async_key = "@dictionary:user";
 
     useEffect(() => {
@@ -115,14 +120,28 @@ function AuthProvider({ children }: AuthProviderProps) {
 
 
     async function registerUserFavorites(word: string) {
-        const userAfterUpdate = await apiAllWords.patch(`/users?user_id=eq.${user.id}`, {
+        await apiAllWords.patch(`/users?user_id=eq.${user.id}`, {
             favorites: [
                 ...user.favorites,
                 word
             ]
         });
+        setUserRequestLoading(false);
     }
+
+    async function registerHistory(word: string) {
+        setUserRequestLoading(true);
+        await apiAllWords.patch(`/users?user_id=eq.${user.id}`, {
+            history: [
+                word,
+                ...user.history
+            ]
+        });
+        setUserRequestLoading(false);
+    }
+
     async function favoriteWord(word: string) {
+        setUserRequestLoading(true);
         if (user.favorites.length > 0) {
             const newUserLogged = {
                 ...user,
@@ -140,6 +159,26 @@ function AuthProvider({ children }: AuthProviderProps) {
         }
     }
 
+    async function unfavoritWord(word: string) {
+        setUserRequestLoading(true);
+        let newList = user.favorites.filter(value => (value != word));
+
+        await apiAllWords.patch(`/users?user_id=eq.${user.id}`, {
+            favorites: newList
+        });
+        const newUserLogged = {
+            ...user,
+            favorites: newList,
+        };
+        setUser(newUserLogged);
+        setUserRequestLoading(false);
+    }
+
+    async function logout() {
+        setUser({} as User);
+        await AsyncStorage.removeItem(async_key);
+    }
+
     return (
         <AuthContext.Provider
             value={{
@@ -148,6 +187,10 @@ function AuthProvider({ children }: AuthProviderProps) {
                 userStoragedLoading,
                 favoriteWord,
                 getUserById,
+                unfavoritWord,
+                userRequestLoading,
+                registerHistory,
+                logout
             }}
         >
             {children}

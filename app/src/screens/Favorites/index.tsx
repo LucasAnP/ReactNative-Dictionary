@@ -2,13 +2,13 @@ import React, { useEffect, useState } from "react";
 
 import { useTheme } from "styled-components";
 import { FlatList, StatusBar } from "react-native";
-import { WordButton } from "../../components/WordButton";
+import { Word } from "../../components/WordButton";
 
 import { Container, ListContainer, Title, TitleContainer } from "./styles";
 import { WordModal } from "../../components/WordModal";
 import { useAuth } from "../../hooks/auth";
 import { dictionaryApi } from "../../services/api";
-import { AnimatedLoading } from "../../components/AnimatedLoading";
+
 import { useIsFocused } from "@react-navigation/native";
 
 interface WordData {
@@ -87,7 +87,7 @@ export function Favorites() {
                     <FlatList
                         data={user.favorites}
                         renderItem={({ item }) => (
-                            <WordButton word={item} onPress={() => requestWord(item)} />
+                            <Word word={item} onPress={() => requestWord(item)} />
                         )}
                         keyExtractor={(item, index) => item[index]}
                         numColumns={2}

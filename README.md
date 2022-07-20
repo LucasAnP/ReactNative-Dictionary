@@ -1,8 +1,34 @@
-# Dictionary
+## Descrição do Projeto
 
-Desafio coodesh utilizando React Native
+<p align="center">Escrever uma breve descrição</p>
+
+<h1 align="center">
+    <a href="https://reactnative.dev/">🔗 React Native</a>
+</h1>
+<p align="center">🚀 lib para construir interfaces do usuário com componentes reutilizáveis</p>
+
+# Desafio coodesh utilizando React Native
 
 > Nesse desafio deverá ser desenvolvolvido um aplicativo para listar palavras em inglês, utilizando como base a API Free Dictionary API. O projeto tem como objetivo exibir termos em inglês e gerenciar as palavras visualizadas, conforme indicado nos casos de uso.
+
+# Tecnologias
+
+=================
+
+<!--ts-->
+
+- TypeScrypt
+- Expo
+- ContextAPI
+- Axios
+- Async Storage
+- Lottie
+- React Hook Form
+- Fonts
+  - Poppins Bold, Poppins Regular, Poppins Medium
+- Icons
+  - Expo Icons (MaterialIcons)
+  <!--te-->
 
 Manipulação dos dados:
 
@@ -12,7 +38,7 @@ Manipulação dos dados:
 
 - Não só existem palavras, mas também phrasel verbs. Então, fiz listas de duas colunas para ficar melhor visivelmente.
 
-Plus:
+Extras:
 
 - Poder ver as palavras favoritadas quando abir o modal do historico
 

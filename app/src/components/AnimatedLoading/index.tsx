@@ -8,14 +8,16 @@ interface Props {
 
 export function AnimatedLoading({ isVisible }: Props) {
     return (
-        <Container>
-            <AnimatedModal isVisible={isVisible} >
-                <LottieIcon
-                    autoPlay
-                    loop
-                    source={require("../../assets/lottie/Animated-Loading")}
-                />
-            </AnimatedModal>
-        </Container>
+        <>
+            {isVisible && (
+                <Container>
+                    <LottieIcon
+                        autoPlay
+                        loop
+                        source={require("../../assets/lottie/Animated-Loading")}
+                    />
+                </Container>
+            )}
+        </>
     );
 }

@@ -8,7 +8,7 @@ type Props = TouchableOpacityProps;
 export function ApplyButton({ ...rest }: Props) {
     return (
         <Container {...rest}>
-            <Title>Apply</Title>
+            <Title>Login</Title>
         </Container>
     )
 }

@@ -64,6 +64,7 @@ $ expo start
     - Async Storage
     - Lottie
     - React Hook Form
+    - Styled Component
     - Fonts
         - Poppins Bold, Poppins Regular, Poppins Medium
     - Icons

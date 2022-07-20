@@ -90,7 +90,6 @@ export function WordList() {
     }
 
     async function fetchWords() {
-        setLoading(true);
         setRefreshLoading(true)
         if (finalBase <= 3000) {
             try {
@@ -116,19 +115,13 @@ export function WordList() {
                 console.warn(error)
             } finally {
                 //If th request was ok or not, set the loading false
-                setLoading(false);
                 setRefreshLoading(false)
             }
         } else {
             setListIsEnd(true);
-            setLoading(false);
             setRefreshLoading(false)
         }
     }
-
-    useEffect(() => {
-        fetchWords()
-    }, [])
 
     function renderFooter() {
         return (
@@ -138,6 +131,10 @@ export function WordList() {
             </FooterContainer>
         )
     }
+
+    useEffect(() => {
+        fetchWords()
+    }, [])
 
     return (
         <>
@@ -172,6 +169,7 @@ export function WordList() {
                             alignItems: 'center',
                             zIndex: 2
                         }}
+                        initialNumToRender={20}
                         onEndReached={fetchWords}
                         ListFooterComponent={renderFooter}
                     />

@@ -61,6 +61,7 @@ export function History() {
         } finally {
             //If th request was ok or not, set the loading false
             setLoading(false);
+            setRefreshing(false);
         }
     }
 

@@ -1,7 +1,8 @@
 {
   "expo": {
     "name": "Dictionary",
-    "slug": "Dictionary",
+    "slug": "dictionary",
+    "owner":"niubajr19",
     "version": "1.0.0",
     "assetBundlePatterns": [
       "**/*"

@@ -1,10 +1,10 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { useTheme } from 'styled-components';
 import { apiAllWords, dictionaryApi } from '../../services/api'
 import { ActivityIndicator, FlatList, StatusBar } from 'react-native';
 import { AnimatedLoading } from '../../components/AnimatedLoading';
-import { WordButton } from '../../components/WordButton';
+import { Word } from '../../components/WordButton';
 
 import { Container, FloatContainer, FooterContainer, FooterEndText, ListContainer, Title, TitleContainer } from './styles';
 import { WordModal } from '../../components/WordModal';
@@ -160,7 +160,7 @@ export function WordList() {
                     <FlatList
                         data={words}
                         renderItem={({ item }) => (
-                            <WordButton word={item.word} onPress={() => requestWord(item.word)} />
+                            <Word word={item.word} onPress={() => requestWord(item.word)} />
                         )}
                         keyExtractor={item => item.id}
 

@@ -1,4 +1,4 @@
-import { RFValue } from "react-native-responsive-fontsize";
+import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
 import styled from "styled-components/native";
 
 export const Container = styled.SafeAreaView`
@@ -25,39 +25,30 @@ export const Title = styled.Text`
   color: ${({ theme }) => theme.colors.title};
 `;
 
-export const FooterEndText = styled.Text`
-  font-family: ${({ theme }) => theme.fonts.regular};
-  font-size: ${RFValue(18)}px;
-
-  color: ${({ theme }) => theme.colors.text};
-`;
-
 export const ListContainer = styled.View`
   flex: 1;
 
   justify-content: center;
 `;
 
-export const FloatContainer = styled.TouchableOpacity`
-  width: ${RFValue(40)}px;
-  height: ${RFValue(40)}px;
+export const WordBordered = styled.TouchableOpacity`
+  width: ${RFPercentage(40)}px;
 
-  background-color: ${({ theme }) => theme.colors.title};
-  border-radius: 80px;
+  margin: 5px;
+  padding: 5px;
 
   align-items: center;
   justify-content: center;
 
-  position: absolute;
-
-  top: 2%;
-  right: 5%;
+  border: 0.3px solid ${({ theme }) => theme.colors.title};
+  border-radius: 5px;
 `;
 
-export const FooterContainer = styled.View`
-  height: 50px;
-  width: 100%;
-  align-items: center;
-  justify-content: center;
-  margin: 0 10px;
+export const WordText = styled.Text`
+  font-family: ${({ theme }) => theme.fonts.regular};
+  font-size: ${RFValue(16)}px;
+
+  color: ${({ theme }) => theme.colors.text_dark};
+
+  text-align: left;
 `;

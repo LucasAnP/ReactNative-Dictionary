@@ -5,10 +5,12 @@ import { useTheme } from 'styled-components';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Platform } from 'react-native';
 import { WordList } from '../screens/WordsList';
+import { Favorites } from '../screens/Favorites';
+import { History } from '../screens/History';
 
 const { Navigator, Screen } = createBottomTabNavigator();
 
-export function MainRoutes() {
+export function AppRoutes() {
     const theme = useTheme();
 
     return (
@@ -32,7 +34,7 @@ export function MainRoutes() {
                 }}
 
             />
-            <Screen name={"History"} component={WordList}
+            <Screen name={"History"} component={History}
                 options={{
                     headerShown: false,
                     tabBarIcon: (({ size, color }) => (
@@ -42,7 +44,7 @@ export function MainRoutes() {
                     ))
                 }}
             />
-            <Screen name={"Favorites"} component={WordList}
+            <Screen name={"Favorites"} component={Favorites}
                 options={{
                     headerShown: false,
                     tabBarIcon: (({ size, color }) => (

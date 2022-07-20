@@ -1,12 +1,14 @@
+import 'react-native-gesture-handler';
 import { useFonts, Poppins_400Regular, Poppins_500Medium, Poppins_700Bold } from '@expo-google-fonts/poppins';
-import { NavigationContainer } from '@react-navigation/native';
 import React, { useCallback, useEffect, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 import { ThemeProvider } from 'styled-components';
 import theme from './src/global/styles/theme';
-import { MainRoutes } from './src/routes/app.routes';
 import * as SplashScreen from 'expo-splash-screen';
 import LottieView from 'lottie-react-native';
+import { AuthProvider, useAuth } from './src/hooks/auth'
+import { Routes } from './src/routes';
+import { Splash } from './src/components/Splash';
 
 export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
@@ -15,6 +17,7 @@ export default function App() {
     Poppins_500Medium,
     Poppins_700Bold
   })
+  const { userStoragedLoading } = useAuth();
 
   useEffect(() => {
     if (!fontsLoaded) {
@@ -29,7 +32,6 @@ export default function App() {
           setAppIsReady(true);
         }
       }
-
       prepare();
     }
   }, []);
@@ -40,29 +42,19 @@ export default function App() {
     }
   }, [appIsReady]);
 
-  if (!appIsReady) {
+  if (!appIsReady || userStoragedLoading) {
     return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
-        onLayout={onLayoutRootView}>
-        <LottieView autoPlay
-          loop
-          style={{
-            width: 200,
-            height: 200,
-          }}
-          source={require('./src/assets/lottie/Animated-Splash')}
-        />
-      </View>
-    );
+      <Splash onLayout={onLayoutRootView} />
+    )
   }
 
   return (
     <ThemeProvider theme={theme}>
-      <NavigationContainer>
-        {appIsReady &&
-          <MainRoutes />
-        }
-      </NavigationContainer>
+      {appIsReady &&
+        <AuthProvider>
+          <Routes />
+        </AuthProvider>
+      }
     </ThemeProvider>
   );
 }

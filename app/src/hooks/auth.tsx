@@ -68,37 +68,39 @@ function AuthProvider({ children }: AuthProviderProps) {
                 email: userLogged.email,
                 favorites: userLogged.favorites,
                 history: userLogged.history,
-            })
+            });
             await AsyncStorage.setItem(async_key, JSON.stringify(userLogged));
-        } catch (error) {
-
-        }
+        } catch (error) { }
     }
 
     async function getUserById() {
         try {
-            const request = await apiAllWordsWithoutJWT.get(`/users?user_id=eq.${user.id}&select=*`);
+            const request = await apiAllWordsWithoutJWT.get(
+                `/users?user_id=eq.${user.id}&select=*`
+            );
             setUser({
                 id: request.data[0].user_id,
                 email: request.data[0].email,
                 favorites: request.data[0].favorites,
-                history: request.data[0].history
+                history: request.data[0].history,
             });
         } catch (error) {
-            console.warn('Error when get user');
+            console.warn("Error when get user");
         }
     }
 
     async function getUserByIdAndCreateIfDont(logged) {
         try {
-            const request = await apiAllWordsWithoutJWT.get(`/users?user_id=eq.${logged.user.id}&select=*`);
+            const request = await apiAllWordsWithoutJWT.get(
+                `/users?user_id=eq.${logged.user.id}&select=*`
+            );
 
             const userLogged = {
                 id: request.data[0].user_id,
                 email: request.data[0].email,
                 favorites: request.data[0].favorites,
-                history: request.data[0].history
-            }
+                history: request.data[0].history,
+            };
             setUser(userLogged);
             await AsyncStorage.setItem(async_key, JSON.stringify(userLogged));
         } catch (error) {
@@ -107,6 +109,7 @@ function AuthProvider({ children }: AuthProviderProps) {
     }
 
     async function login(userData) {
+        setUserRequestLoading(true);
         try {
             //Do the login
             const { data } = await authApi.post("/token?grant_type=password", {
@@ -115,21 +118,17 @@ function AuthProvider({ children }: AuthProviderProps) {
             });
             //Check if user exist in DB (account created) and if dont, create an account
             getUserByIdAndCreateIfDont(data);
-
         } catch (error) {
             console.warn("error", error);
-            return
+            return;
+        } finally {
+            setUserRequestLoading(false);
         }
     }
 
-
-
     async function registerUserFavorites(word: string) {
         await apiAllWords.patch(`/users?user_id=eq.${user.id}`, {
-            favorites: [
-                ...user.favorites,
-                word
-            ]
+            favorites: [...user.favorites, word],
         });
         setUserRequestLoading(false);
     }
@@ -137,10 +136,7 @@ function AuthProvider({ children }: AuthProviderProps) {
     async function registerHistory(word: string) {
         setUserRequestLoading(true);
         await apiAllWords.patch(`/users?user_id=eq.${user.id}`, {
-            history: [
-                word,
-                ...user.history
-            ]
+            history: [word, ...user.history],
         });
         setUserRequestLoading(false);
     }
@@ -153,23 +149,23 @@ function AuthProvider({ children }: AuthProviderProps) {
                 favorites: [...user.favorites, word],
             };
             setUser(newUserLogged);
-            registerUserFavorites(word)
+            registerUserFavorites(word);
         } else {
             const newUserLogged = {
                 ...user,
                 favorites: [word],
             };
             setUser(newUserLogged);
-            registerUserFavorites(word)
+            registerUserFavorites(word);
         }
     }
 
     async function unfavoritWord(word: string) {
         setUserRequestLoading(true);
-        let newList = user.favorites.filter(value => (value != word));
+        let newList = user.favorites.filter((value) => value != word);
 
         await apiAllWords.patch(`/users?user_id=eq.${user.id}`, {
-            favorites: newList
+            favorites: newList,
         });
         const newUserLogged = {
             ...user,
@@ -195,7 +191,7 @@ function AuthProvider({ children }: AuthProviderProps) {
                 unfavoritWord,
                 userRequestLoading,
                 registerHistory,
-                logout
+                logout,
             }}
         >
             {children}

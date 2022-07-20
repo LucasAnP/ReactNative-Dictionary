@@ -25,10 +25,10 @@ export function WordList() {
     const [wordOpen, setWordOpen] = useState<WordData>();
     const [showWordModal, setShowWordModal] = useState(false);
 
-    const { registerHistory, logout } = useAuth();
+    const { logout, registerHistory } = useAuth();
 
     const [initialBase, setInitialBase] = useState(0);
-    const [finalBase, setFinalBase] = useState(10);
+    const [finalBase, setFinalBase] = useState(200);
 
     const [refreshLoading, setRefreshLoading] = useState(false);
     const [listIsEnd, setListIsEnd] = useState(false);
@@ -107,8 +107,10 @@ export function WordList() {
                 } else {
                     arrayConcat = response.data;
                 }
-                setInitialBase(initialBase + 11);
-                setFinalBase(finalBase + 10);
+
+                // Do the pagination 0 ~ 200 / 201 ~ 400
+                setInitialBase(initialBase + 201);
+                setFinalBase(finalBase + 200);
                 setWords(arrayConcat);
             } catch (error) {
                 console.warn(error)

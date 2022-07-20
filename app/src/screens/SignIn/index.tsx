@@ -1,22 +1,20 @@
-import React, { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import React from "react";
+import { useForm } from "react-hook-form";
 
-import *  as Yup from 'yup';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { Alert, KeyboardAvoidingView, Platform, Text } from 'react-native';
-import { AnimatedLoading } from '../../components/AnimatedLoading';
-import { InputForm } from '../../components/Form/InputForm';
-import { useAuth } from '../../hooks/auth';
-import { Container, ContentContainer, InfoContainer, Title, TitleContainer } from './styles';
-import ReactNativeModal from 'react-native-modal';
-import { ApplyButton } from '../../components/ApplyButton';
-
-interface WordData {
-    name: string;
-    phonetic: string;
-    meaning: string;
-}
-
+import * as Yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { AnimatedLoading } from "../../components/AnimatedLoading";
+import { InputForm } from "../../components/Form/InputForm";
+import { useAuth } from "../../hooks/auth";
+import {
+    Container,
+    ContentContainer,
+    InfoContainer,
+    Title,
+    TitleContainer,
+} from "./styles";
+import ReactNativeModal from "react-native-modal";
+import { ApplyButton } from "../../components/ApplyButton";
 interface FormData {
     email: string;
     password: string;
@@ -24,38 +22,36 @@ interface FormData {
 
 export function SignIn() {
     const { userStoragedLoading } = useAuth();
-    const { login } = useAuth();
-
-    const [data, setData] = useState({} as FormData);
+    const { login, userRequestLoading } = useAuth();
 
     const schema = Yup.object().shape({
-        email: Yup
-            .string()
+        email: Yup.string()
             .email("Please enter valid email")
-            .required('Email Address is Required'),
-        password: Yup
-            .string()
+            .required("Email Address is Required"),
+        password: Yup.string()
             .min(6, ({ min }) => `Password must be at least ${min} characters`)
-            .required('Password is required'),
-    })
+            .required("Password is required"),
+    });
 
-    const { control, handleSubmit, formState: { errors } } = useForm({
-        resolver: yupResolver(schema)
+    const {
+        control,
+        handleSubmit,
+        formState: { errors },
+    } = useForm({
+        resolver: yupResolver(schema),
     });
 
     function handleRegister(form: FormData) {
         const userData = {
             email: form.email,
-            password: form.password
-        }
-        setData(userData);
+            password: form.password,
+        };
         login(userData);
     }
 
-
     return (
         <Container>
-            <AnimatedLoading isVisible={userStoragedLoading} />
+            <AnimatedLoading isVisible={userStoragedLoading || userRequestLoading} />
             <ReactNativeModal
                 animationIn={"slideInUp"}
                 animationInTiming={500}
@@ -69,19 +65,19 @@ export function SignIn() {
                     </TitleContainer>
                     <ContentContainer>
                         <InputForm
-                            name={'email'}
+                            name={"email"}
                             control={control}
-                            placeholder={'email'}
-                            autoCapitalize={'none'}
+                            placeholder={"email"}
+                            autoCapitalize={"none"}
                             autoCorrect={false}
-                            keyboardType={'email-address'}
+                            keyboardType={"email-address"}
                             error={errors.email && errors.email.message}
                         />
                         <InputForm
-                            name={'password'}
+                            name={"password"}
                             control={control}
-                            placeholder={'password'}
-                            autoCapitalize={'none'}
+                            placeholder={"password"}
+                            autoCapitalize={"none"}
                             autoCorrect={false}
                             secureTextEntry={true}
                             error={errors.password && errors.password.message}

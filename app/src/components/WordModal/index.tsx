@@ -1,6 +1,18 @@
 import React, { useEffect, useState } from "react";
 
-import { AnimatedModal, CloseButtonContainer, MeaningsContainer, MeaningsText, MeaningsTitleContainer, ModalContainer, PhoneticSelectedText, Title, TopButtonsContainer, WordContainer, WordSelectedText } from "./styles";
+import {
+    AnimatedModal,
+    CloseButtonContainer,
+    MeaningsContainer,
+    MeaningsText,
+    MeaningsTitleContainer,
+    ModalContainer,
+    PhoneticSelectedText,
+    Title,
+    TopButtonsContainer,
+    WordContainer,
+    WordSelectedText,
+} from "./styles";
 import { MaterialIcons } from "@expo/vector-icons";
 import { RFValue } from "react-native-responsive-fontsize";
 import { useTheme } from "styled-components";
@@ -40,10 +52,9 @@ export function WordModal({ isVisible, setIsVisible, data }: Props) {
                 if (value === data.name) {
                     setStarFilled(true);
                 }
-            })
+            });
         }
-
-    }, [])
+    }, []);
 
     function onPressStar() {
         if (data.favorite && starFilled) {
@@ -60,7 +71,8 @@ export function WordModal({ isVisible, setIsVisible, data }: Props) {
     }
 
     return (
-        <AnimatedModal isVisible={isVisible}
+        <AnimatedModal
+            isVisible={isVisible}
             animationIn={"slideInUp"}
             animationInTiming={500}
             animationOut={"slideOutDFown"}
@@ -76,7 +88,10 @@ export function WordModal({ isVisible, setIsVisible, data }: Props) {
                             color={colors.background}
                         />
                     </CloseButtonContainer>
-                    <TouchableOpacity onPress={onPressStar} disabled={starFilled && !data.favorite}>
+                    <TouchableOpacity
+                        onPress={onPressStar}
+                        disabled={starFilled && !data.favorite}
+                    >
                         <MaterialIcons
                             name={starFilled ? "star" : "star-outline"}
                             size={RFValue(35)}
@@ -97,7 +112,6 @@ export function WordModal({ isVisible, setIsVisible, data }: Props) {
                 <MeaningsContainer>
                     <MeaningsText>{data.meaning}</MeaningsText>
                 </MeaningsContainer>
-
             </ModalContainer>
         </AnimatedModal>
     );

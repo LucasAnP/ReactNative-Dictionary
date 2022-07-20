@@ -43,7 +43,9 @@ export default function App() {
   }, [appIsReady]);
 
   if (!appIsReady || userStoragedLoading) {
-    <Splash onLayout={onLayoutRootView} />
+    return (
+      <Splash onLayout={onLayoutRootView} />
+    )
   }
 
   return (

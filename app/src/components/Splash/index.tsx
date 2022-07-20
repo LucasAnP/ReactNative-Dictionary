@@ -1,3 +1,4 @@
+import AnimatedLottieView from 'lottie-react-native';
 import React from 'react';
 
 import { Container, Title } from './styles';
@@ -9,7 +10,7 @@ interface SplashProps {
 export function Splash({ onLayout }: SplashProps) {
     return (
         <Container onLayout={onLayout}>
-            <LottieView autoPlay
+            <AnimatedLottieView autoPlay
                 loop
                 style={{
                     width: 200,

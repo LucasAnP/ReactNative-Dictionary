@@ -6,6 +6,9 @@
 
 > Nesse desafio deverá ser desenvolvolvido um aplicativo para listar palavras em inglês, utilizando como base a API Free Dictionary API. O projeto tem como objetivo exibir termos em inglês e gerenciar as palavras visualizadas, conforme indicado nos casos de uso.
 
+# Testar aplicativo
+Para testar o aplicativo poderá baixar o apk 'Dictionary-v1.apk' e instalar no seu dispositivo android.
+
 ## Requisitos para rodar localmente
 
 ```

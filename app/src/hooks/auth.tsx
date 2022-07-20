@@ -92,12 +92,15 @@ function AuthProvider({ children }: AuthProviderProps) {
     async function getUserByIdAndCreateIfDont(logged) {
         try {
             const request = await apiAllWordsWithoutJWT.get(`/users?user_id=eq.${logged.user.id}&select=*`);
-            setUser({
+
+            const userLogged = {
                 id: request.data[0].user_id,
                 email: request.data[0].email,
                 favorites: request.data[0].favorites,
                 history: request.data[0].history
-            });
+            }
+            setUser(userLogged);
+            await AsyncStorage.setItem(async_key, JSON.stringify(userLogged));
         } catch (error) {
             await createAccount(logged);
         }

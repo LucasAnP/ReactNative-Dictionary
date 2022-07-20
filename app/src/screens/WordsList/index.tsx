@@ -2,11 +2,11 @@ import React, { useContext, useEffect, useMemo, useState } from 'react';
 
 import { useTheme } from 'styled-components';
 import { apiAllWords, dictionaryApi } from '../../services/api'
-import { FlatList, StatusBar } from 'react-native';
+import { ActivityIndicator, FlatList, StatusBar } from 'react-native';
 import { AnimatedLoading } from '../../components/AnimatedLoading';
 import { WordButton } from '../../components/WordButton';
 
-import { Container, FloatContainer, ListContainer, Title, TitleContainer } from './styles';
+import { Container, FloatContainer, FooterContainer, FooterEndText, ListContainer, Title, TitleContainer } from './styles';
 import { WordModal } from '../../components/WordModal';
 import { useAuth } from '../../hooks/auth';
 import { MaterialIcons } from "@expo/vector-icons";
@@ -19,50 +19,65 @@ interface WordData {
 }
 
 export function WordList() {
-    const [words, setWords] = useState();
+    const [words, setWords] = useState([]);
     const [loading, setLoading] = useState(false);
 
     const [wordOpen, setWordOpen] = useState<WordData>();
     const [showWordModal, setShowWordModal] = useState(false);
 
+    const { registerHistory, logout } = useAuth();
+
+    const [initialBase, setInitialBase] = useState(0);
+    const [finalBase, setFinalBase] = useState(10);
+
+    const [refreshLoading, setRefreshLoading] = useState(false);
+    const [listIsEnd, setListIsEnd] = useState(false);
+
     const { colors } = useTheme();
 
-    const { registerHistory, logout } = useAuth();
+    // To save request in cache
+    const [requestedsWords, setRequestedsWords] = useState([]);
+    const [requestedContainsInCache, setRequestedContainsInCache] = useState(false);
 
     async function requestWord(word: string) {
         setLoading(true);
         await registerHistory(word);
-        try {
-            const response = await dictionaryApi.get(`/${word}`);
-            const formatedResponse: WordData = {
-                name: word,
-                phonetic: response.data[0].phonetic ? response.data[0].phonetic : '',
-                meaning: response.data[0].meanings ? response.data[0].meanings[0].definitions[0].definition : ''
 
+        //If the word is in cache, dont do the request to API
+        let finded = requestedsWords.find((object) => {
+            if (object.name == word) {
+                const formatedResponse: WordData = {
+                    name: object.name,
+                    phonetic: object.phonetic,
+                    meaning: object.meaning
+
+                }
+                setWordOpen(formatedResponse);
+                setShowWordModal(true);
+                return true;
+            } else {
+                return false;
             }
-            setWordOpen(formatedResponse);
-            setShowWordModal(true);
-        } catch (error) {
-            console.warn(error)
-        } finally {
-            //If th request was ok or not, set the loading false
-            setLoading(false);
-        }
-    }
+        });
 
+        finded && setRequestedContainsInCache(true);
+        setLoading(false);
 
-    useEffect(() => {
-        async function fetchWords() {
-            setLoading(true);
+        //If the word isnt in cache, do the request to Library API
+        if (!requestedContainsInCache) {
             try {
-                const response = await apiAllWords.get('/words?select=*',
-                    {
-                        headers: {
-                            range: "0-200"
-                        }
-                    }
-                );
-                setWords(response.data);
+                const response = await dictionaryApi.get(`/${word}`);
+                const formatedResponse: WordData = {
+                    name: word,
+                    phonetic: response.data[0].phonetic ? response.data[0].phonetic : '',
+                    meaning: response.data[0].meanings ? response.data[0].meanings[0].definitions[0].definition : ''
+
+                }
+                requestedsWords.length > 0
+                    ? setRequestedsWords([...requestedsWords, formatedResponse])
+                    : setRequestedsWords([formatedResponse])
+                setWordOpen(formatedResponse);
+                setShowWordModal(true);
             } catch (error) {
                 console.warn(error)
             } finally {
@@ -70,16 +85,65 @@ export function WordList() {
                 setLoading(false);
             }
         }
+
+
+    }
+
+    async function fetchWords() {
+        setLoading(true);
+        setRefreshLoading(true)
+        if (finalBase <= 3000) {
+            try {
+                const response = await apiAllWords.get('/words?select=*',
+                    {
+                        headers: {
+                            range: `${initialBase}-${finalBase}`
+                        }
+                    }
+                );
+                let arrayConcat = [];
+                if (words.length > 0) {
+                    arrayConcat = words.concat(response.data);
+                } else {
+                    arrayConcat = response.data;
+                }
+                setInitialBase(initialBase + 11);
+                setFinalBase(finalBase + 10);
+                setWords(arrayConcat);
+            } catch (error) {
+                console.warn(error)
+            } finally {
+                //If th request was ok or not, set the loading false
+                setLoading(false);
+                setRefreshLoading(false)
+            }
+        } else {
+            setListIsEnd(true);
+            setLoading(false);
+            setRefreshLoading(false)
+        }
+    }
+
+    useEffect(() => {
         fetchWords()
     }, [])
 
+    function renderFooter() {
+        return (
+            <FooterContainer>
+                {refreshLoading && <ActivityIndicator size={30} />}
+                {listIsEnd && <FooterEndText>End</FooterEndText>}
+            </FooterContainer>
+        )
+    }
+
     return (
         <>
-            <AnimatedLoading isVisible={loading} />
             <StatusBar backgroundColor={colors.background} />
             {showWordModal &&
                 <WordModal isVisible={showWordModal} setIsVisible={setShowWordModal} data={wordOpen} />}
             <Container>
+                <AnimatedLoading isVisible={loading} />
                 <TitleContainer>
                     <Title>Word List</Title>
                 </TitleContainer>
@@ -104,8 +168,10 @@ export function WordList() {
                         contentContainerStyle={{
                             justifyContent: 'center',
                             alignItems: 'center',
+                            zIndex: 2
                         }}
-                        initialNumToRender={10}
+                        onEndReached={fetchWords}
+                        ListFooterComponent={renderFooter}
                     />
                 </ListContainer>
             </Container>

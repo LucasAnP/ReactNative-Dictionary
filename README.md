@@ -22,4 +22,10 @@ Plus:
 
 - Refresh na lista se quiser atualizar (pull down)
 
+- Salvando usuário no async Storage para não precisar fazer login se já fez
+
+- Indicador (texto) quando a lista finalizar
+
+- Paginação com push up da flatList
+
 > This is a challenge by Coodesh

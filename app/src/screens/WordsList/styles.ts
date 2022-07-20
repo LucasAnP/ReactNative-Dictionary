@@ -25,6 +25,13 @@ export const Title = styled.Text`
   color: ${({ theme }) => theme.colors.title};
 `;
 
+export const FooterEndText = styled.Text`
+  font-family: ${({ theme }) => theme.fonts.regular};
+  font-size: ${RFValue(18)}px;
+
+  color: ${({ theme }) => theme.colors.text};
+`;
+
 export const ListContainer = styled.View`
   flex: 1;
 
@@ -45,4 +52,12 @@ export const FloatContainer = styled.TouchableOpacity`
 
   top: 2%;
   right: 5%;
+`;
+
+export const FooterContainer = styled.View`
+  height: 50px;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  margin: 0 10px;
 `;

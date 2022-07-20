@@ -28,6 +28,19 @@ $ expo start
 
 # Você poderá abrir o expo Go e escanear o QR Code na tela
 ```
+
+## Credenciais para login no app
+```
+    teste2@gmail.com
+    123456
+    
+    teste3@gmail.com
+    123456
+    
+    teste4@gmail.com
+    123456
+```
+
 ### Tecnologias
 
 =================
